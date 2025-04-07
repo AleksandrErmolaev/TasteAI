@@ -4,10 +4,10 @@ from sqlalchemy import create_engine, Column, Integer, String, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 import time
 
-# Define the base class for declarative models
+
 Base = declarative_base()
 
-# Define the Recipe model
+
 class Recipe(Base):
     __tablename__ = 'recipes'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -17,7 +17,7 @@ class Recipe(Base):
     ingredients = Column(Text)
     instructions = Column(Text)
 
-# Create an SQLite database and a session
+
 engine = create_engine('sqlite:///recipes.db')
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
@@ -35,7 +35,7 @@ def get_url():
             card_url = i.find('a').get('href')
             yield card_url
 
-# Record the start time
+
 start_time = time.time()
 
 for recipe_url in get_url():
@@ -75,29 +75,28 @@ for recipe_url in get_url():
 
     instructions_uls = soup.find_all('ul', itemprop="recipeInstructions")
 
-    # Проходим по каждому элементу с инструкциями
+
     for instructions_ul in instructions_uls:
         steps = instructions_ul.find_all('li')
         for step in steps:
-            # Извлекаем текст из <p> внутри <div> внутри <li>
             div = step.find('div')
             if div:
                 p = div.find('p')
                 if p:
                     instructions_list.append(p.get_text(strip=True))
 
-    # Объединяем все шаги в одну строку
+
     instructions_string = '\n'.join(instructions_list)
 
-    # Проверка на наличие слова "Комментарии" в начале инструкции
+
     if instructions_string.strip().startswith("Комментарии"):
         print(f"Skipping recipe: {name} because instructions start with 'Комментарии'")
         continue
 
-    # Combine ingredients into a single string
+
     ingredients_string = '\n'.join([f"{part}: {', '.join(ingredients)}" for part, ingredients in recipe_parts.items()])
 
-    # Create a new Recipe instance and add it to the session
+
     new_recipe = Recipe(
         name=name,
         description=description,
@@ -107,15 +106,15 @@ for recipe_url in get_url():
     )
     session.add(new_recipe)
 
-# Commit the session to save the data to the database
+
 session.commit()
 
-# Record the end time
+
 end_time = time.time()
 
-# Calculate the elapsed time
+
 elapsed_time = end_time - start_time
 print(f"Time taken to create the database and insert data: {elapsed_time:.2f} seconds")
 
-# Close the session
+
 session.close()
