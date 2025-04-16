@@ -10,7 +10,7 @@ engine = create_engine(f'sqlite:///{db_file}')
 # Извлечение данных из таблицы (например, 'recipes')
 data = pd.read_sql('SELECT * FROM recipes', engine)
 
-ingredients_series = data['ingredients'].str.split(',').explode().str.strip()
+ingredients_series = data['ingredients'].str.split(',').explode().str.strip().str.split().str[0]
 
 # Подсчет частоты использования каждого ингредиента
 ingredient_counts = ingredients_series.value_counts()
