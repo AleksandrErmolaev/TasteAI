@@ -16,11 +16,11 @@ ingredients_series = data['ingredients'].str.split(',').explode().str.strip()
 ingredient_counts = ingredients_series.value_counts()
 
 # Вывод топ-10 ингредиентов
-print(ingredient_counts.head(10))
+print(ingredient_counts.head(20))
 
 plt.figure(figsize=(12, 6))
-sns.barplot(x=ingredient_counts.head(10).index, y=ingredient_counts.head(10).values)
-plt.title('Топ-10 популярных ингредиентов')
+sns.barplot(x=ingredient_counts.head(20).index, y=ingredient_counts.head(20).values)
+plt.title('Топ-20 популярных ингредиентов')
 plt.xlabel('Ингредиенты')
 plt.ylabel('Частота использования')
 plt.xticks(rotation=45)
