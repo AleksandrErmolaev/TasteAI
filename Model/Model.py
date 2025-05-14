@@ -3,8 +3,7 @@ from sklearn.neighbors import NearestNeighbors
 from sqlalchemy import create_engine
 import pandas as pd
 
-# Укажите путь к вашему файлу базы данных
-db_file = 'recipes2.db'  # замените на ваш путь
+db_file = 'recipes2.db'
 engine = create_engine(f'sqlite:///{db_file}')
 
 # Извлекаем данные из таблицы 'recipes'
