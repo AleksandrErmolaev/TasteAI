@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="recipes2" uuid="0adbb493-d393-40b7-a406-acd40dc6fd16">
+    <data-source source="LOCAL" name="recipes" uuid="ce7fc20a-75e3-41a5-ae3f-0bd8e1d988b6">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\Almaz\PycharmProjects\Taste_AI\recipes2.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\Almaz\PycharmProjects\TasteAI\recipes.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>
@@ -16,11 +16,11 @@
         </library>
       </libraries>
     </data-source>
-    <data-source source="LOCAL" name="recipes3" uuid="23493299-0d7d-4202-847e-4f74c9329b35">
+    <data-source source="LOCAL" name="recipes2" uuid="c8beeb28-b759-49bd-b8b7-57c57b928dab">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Users\Almaz\PycharmProjects\Taste_AI\recipes3.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Users\Almaz\PycharmProjects\TasteAI\parser\recipes2.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>
