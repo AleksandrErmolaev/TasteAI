@@ -3,7 +3,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, func
 from models import Recipe
-from Model import Model  # Импортируем функцию рекомендаций
+from Model.Model import recommend_recipes  # Импортируем функцию рекомендаций из модуля Model
 
 # Настройка базы данных
 engine = create_engine("sqlite:///recipes2.db")  # путь к БД
