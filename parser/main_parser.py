@@ -4,9 +4,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 import time
 
-
 Base = declarative_base()
-
 
 class Recipe(Base):
     __tablename__ = 'recipes'

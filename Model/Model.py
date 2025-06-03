@@ -7,7 +7,6 @@ from sklearn.neighbors import NearestNeighbors
 from sqlalchemy import create_engine
 from Model.synonym_finder import find_user_ingredients
 
-# Инициализация глобальных переменных
 current_dir = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(current_dir, '..', 'recipes.db')
 engine = create_engine(f'sqlite:///{db_path}')
@@ -23,18 +22,13 @@ knn = None
 
 
 def load_data():
-    """Загрузка данных из базы данных"""
     global recipe_names, recipes_texts, recipes_full
 
     try:
-        print(f"[DEBUG] Подключаюсь к базе по пути: {db_path}")
         data = pd.read_sql('SELECT name, ingredients, instructions FROM recipes', engine)
 
         if data.empty:
             raise ValueError("Таблица 'recipes' пуста или не существует")
-
-        print(f"[DEBUG] Загружено {len(data)} рецептов")
-        print("[DEBUG] Пример данных:", data.iloc[0] if len(data) > 0 else "Нет данных")
 
         recipe_names = data['name'].tolist()
         recipes_texts = data['ingredients'].tolist()
@@ -46,7 +40,6 @@ def load_data():
 
 
 def generate_synonyms():
-    """Генерация словаря синонимов ингредиентов"""
     synonym_dict = defaultdict(list)
 
     synonym_groups = [
@@ -67,7 +60,6 @@ def generate_synonyms():
 
 
 def parse_ingredients(ingredients_str):
-    """Парсинг строки с ингредиентами"""
     ingredients = []
     for ing in re.split(r'[,;]', ingredients_str):
         ing = re.sub(r'\d+[.,]?\d*', '', ing).strip().lower()
@@ -78,7 +70,6 @@ def parse_ingredients(ingredients_str):
 
 
 def normalize_ingredient(ing):
-    """Нормализация ингредиента с учетом синонимов"""
     ing = ing.lower().strip()
     for main_word, syns in synonyms.items():
         if ing == main_word or ing in syns:
@@ -87,7 +78,6 @@ def normalize_ingredient(ing):
 
 
 def prepare_model():
-    """Подготовка модели машинного обучения"""
     global all_ingredients, vectorizer, X, knn
 
     all_ingredients_set = set()
@@ -116,7 +106,6 @@ def recommend_recipes(user_input, return_full=True):
     load_data()
     prepare_model()
     user_ingredients = find_user_ingredients(user_input, all_ingredients, synonyms)
-    print(f"[DEBUG] Найдены ингредиенты: {user_ingredients}")
 
     results = []
     for idx, ingredients in enumerate(recipes_texts):
@@ -133,9 +122,6 @@ def recommend_recipes(user_input, return_full=True):
 
 
 def format_recommendations(recommendations):
-    synonyms = generate_synonyms()
-    load_data()
-    prepare_model()
     if not recommendations:
         return "Не найдено подходящих рецептов. Попробуйте другие ингредиенты."
 
@@ -149,7 +135,6 @@ def format_recommendations(recommendations):
         parsed_ingredients = parse_ingredients(ingredients)
         match_count = recipe.get('match_count', 0)
 
-        # Безопасный расчет процента совпадения
         try:
             match_percent = int((match_count / len(parsed_ingredients)) * 100) if parsed_ingredients else 0
         except ZeroDivisionError:
@@ -157,9 +142,6 @@ def format_recommendations(recommendations):
 
         msg = f"🍳 {name}\n"
         msg += f"🔹 Совпадение: {match_percent}%\n"
-        msg += f"🔹 Ингредиенты: {', '.join(parsed_ingredients[:3])}"
-        if len(parsed_ingredients) > 3:
-            msg += "..."
 
         messages.append(msg)
 
