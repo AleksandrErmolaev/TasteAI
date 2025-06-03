@@ -3,7 +3,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, func
 from models import Recipe
-from Model.Model import recommend_recipes
+from Model.Model import recommend_recipes, format_recommendations
 
 engine = create_engine("sqlite:///recipes2.db")
 Session = sessionmaker(bind=engine)
@@ -52,7 +52,8 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         elif action == "recommend":
             user_ingredients = [ing.strip() for ing in user_input.split(',')]
             recommendations = recommend_recipes(user_ingredients)
-            await update.message.reply_text("Рекомендуемые рецепты:\n" + "\n".join(recommendations), reply_markup=get_keyboard())
+            formatted_text = format_recommendations(recommendations)
+            await update.message.reply_text(formatted_text, reply_markup=get_keyboard())
         elif action == "instructions":
             try:
                 recipe = session.query(Recipe).get(int(user_input))
