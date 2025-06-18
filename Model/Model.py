@@ -25,7 +25,7 @@ def load_data():
     global recipe_names, recipes_texts, recipes_full
 
     try:
-        data = pd.read_sql('SELECT name, ingredients, instructions FROM recipes', engine)
+        data = pd.read_sql('SELECT name, ingredients, instructions, id FROM recipes', engine)
 
         if data.empty:
             raise ValueError("Таблица 'recipes' пуста или не существует")
@@ -59,15 +59,29 @@ def generate_synonyms():
     return synonym_dict
 
 
+import re
+
 def parse_ingredients(ingredients_str):
     ingredients = []
-    for ing in re.split(r'[,;]', ingredients_str):
-        ing = re.sub(r'\d+[.,]?\d*', '', ing).strip().lower()
-        ing = re.sub(r'\(.*?\)', '', ing).strip()
-        if ing:
-            ingredients.append(ing)
-    return ingredients
+    # Разбиваем по запятым или точкам с запятой
+    parts = re.split(r'[;,]', ingredients_str)
 
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+
+        split_parts = re.split(r'\s*[-—]\s*', part)
+        ingredient_name = split_parts[0].strip().lower()
+
+        ingredient_name = ingredient_name.split('/')[0].strip()
+
+        ingredient_name = re.sub(r'\(.*?\)', '', ingredient_name).strip()
+
+        if ingredient_name:
+            ingredients.append(ingredient_name)
+
+    return ingredients
 
 def normalize_ingredient(ing):
     ing = ing.lower().strip()
@@ -102,6 +116,7 @@ def prepare_model():
 
 
 def recommend_recipes(user_input, return_full=True):
+    global synonyms
     synonyms = generate_synonyms()
     load_data()
     prepare_model()
@@ -113,6 +128,7 @@ def recommend_recipes(user_input, return_full=True):
         common = set(user_ingredients) & set(recipe_ings)
         if common:
             results.append({
+                'id': recipes_full[idx]['id'],
                 'name': recipe_names[idx],
                 'match_count': len(common),
                 'ingredients': ingredients
@@ -140,10 +156,20 @@ def format_recommendations(recommendations):
         except ZeroDivisionError:
             match_percent = 0
 
-        msg = f"🍳 {name}\n"
+        msg = f"🍳 {name} (ID: {recipe['id']})\n"
         msg += f"🔹 Совпадение: {match_percent}%\n"
 
         messages.append(msg)
 
     return "Рекомендуемые рецепты:\n\n" + "\n\n".join(messages)
 
+
+def format_recommendation_buttons(recommendations):
+    from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+
+    buttons = [
+        [InlineKeyboardButton(f"{rec['name']} ({rec['match_count']} совп.)", callback_data=f"recipe_{rec['id']}")]
+        for rec in recommendations
+    ]
+
+    return InlineKeyboardMarkup(buttons)
