@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import defaultdict
 from sklearn.neighbors import NearestNeighbors
 from sqlalchemy import create_engine
-from synonym_finder import find_user_ingredients
+from Model.synonym_finder import find_user_ingredients
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(current_dir, '..', 'recipes.db')
